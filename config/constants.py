@@ -2,11 +2,11 @@ from config.utils import *
 import os
 
 DATA_INPUTS = dict({
-  'main_dataset': pd.read_pickle(PROJECT_PATHS['main_dataset']).sample(10000, random_state=20)
+  'main_dataset': read_data(PROJECT_PATHS['main_dataset'], chunk_size=10000)
 })
 
 DATA_PROCESS = dict({
-  
+  'label_encoder': os.path.join(PROJECT_PATHS['artifacts'], 'label_encoder.pkl')
 })
 
 DATA_OUTPUTS = dict({
