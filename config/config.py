@@ -11,5 +11,3 @@ EXPERIMENTS = '../assets/experiments/'
 PROJECT_PATHS = dict({
   "experiment": os.path.join(EXPERIMENTS, SOLUTION),
 })
-
-print(PROJECT_PATHS) 
