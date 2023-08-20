@@ -20,7 +20,7 @@ EXPERIMENTS_CONSTANTS = dict({
         "key_var": "metrics_recording",
         "model_name": "Newery",
         "path": os.path.join(
-            PROJECT_PATHS["EXPERIMENT_SOLUTION_PATH"], "topic_modeling_v2"
+            PROJECT_PATHS["experiment"], "topic_modeling_v2"
         ),
     }
 })
