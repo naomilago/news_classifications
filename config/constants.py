@@ -1,9 +1,8 @@
-from datetime import datetime
-from config.config import *
+from config.utils import *
 import os
 
 DATA_INPUTS = dict({
-  
+  'main_dataset': pd.read_pickle(PROJECT_PATHS['main_dataset']).sample(10000, random_state=20)
 })
 
 DATA_PROCESS = dict({
