@@ -12,7 +12,7 @@ data = pd.concat(data_chunks, ignore_index=True)
 def data_prep(df: pd.DataFrame, text: str = 'headline', target: str = 'category', infer: bool = True, verbose: bool = True):
     if verbose:
         if not infer:
-            logger.info('Preparing data for inference...')
+            logger.info('Preparing data for training...')
             logger.info('Label encoding the targets...')
 
             le = joblib.load(DATA_PROCESS['label_encoder'])
@@ -21,13 +21,60 @@ def data_prep(df: pd.DataFrame, text: str = 'headline', target: str = 'category'
             logger.info('Tokenizing the texts...')
             df['tokens'], df['refined_text'] = df[text].apply(lambda x: tokenizer(x)[0]), df[text].apply(lambda y: tokenizer(y)[-1])
 
-            print(get_ids('hi catapimbas', max_length=5))
+            logger.info('Getting the text vectors...')
+            df['vector'] = df['refined_text'].apply(lambda z: get_ids(z))
 
+            logger.info('Splitting into train/test...')
+            train, test = train_test_split(df, test_size=.2, random_state=20)
+
+            logger.success('Data prepared successfully for training 🎉')
+            train.to_pickle(os.path.join(DATA_PROCESS['data_prep'], 'train.pkl'))
+            test.to_pickle(os.path.join(DATA_PROCESS['data_prep'], 'test.pkl'))
+
+            return dict({
+                'train': train,
+                'test': test
+            })
         else:
-            pass
-    else:
-        pass
+            logger.info('Preparing data for inference...')
+            logger.info('Tokenizing the texts...')
+            df['tokens'], df['refined_text'] = df[text].apply(lambda x: tokenizer(x)[0]), df[text].apply(
+                lambda y: tokenizer(y)[-1])
 
+            logger.info('Getting the text vectors...')
+            df['vector'] = df['refined_text'].apply(lambda z: get_ids(z))
+
+            logger.success('Data prepared successfully for inference 🎉')
+            df.to_pickle(os.path.join(DATA_PROCESS['data_prep'], 'infer.pkl'))
+
+            return df
+    else:
+        if not infer:
+            le = joblib.load(DATA_PROCESS['label_encoder'])
+            df[str.join('', 'le_' + target)] = le.transform(df[target].tolist())
+
+            df['tokens'], df['refined_text'] = df[text].apply(lambda x: tokenizer(x)[0]), df[text].apply(lambda y: tokenizer(y)[-1])
+
+            df['vector'] = df['refined_text'].apply(lambda z: get_ids(z))
+
+            train, test = train_test_split(df, test_size=.2, random_state=20)
+
+            train.to_pickle(os.path.join(DATA_PROCESS['data_prep'], 'train.pkl'))
+            test.to_pickle(os.path.join(DATA_PROCESS['data_prep'], 'test.pkl'))
+
+            return dict({
+                'train': train,
+                'test': test
+            })
+        else:
+            df['tokens'], df['refined_text'] = df[text].apply(lambda x: tokenizer(x)[0]), df[text].apply(
+                lambda y: tokenizer(y)[-1])
+
+            df['vector'] = df['refined_text'].apply(lambda z: get_ids(z))
+
+            df.to_pickle(os.path.join(DATA_PROCESS['data_prep'], 'infer.pkl'))
+
+            return df
 
 if __name__ == '__main__':
     data_prep(df=data.sample(10, random_state=20), infer=False, verbose=True)

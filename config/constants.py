@@ -2,11 +2,12 @@ from config.utils import *
 import os
 
 DATA_INPUTS = dict({
-  'main_dataset': read_data(PROJECT_PATHS['main_dataset'], chunk_size=10000)
+    'main_dataset': read_data(PROJECT_PATHS['main_dataset'], chunk_size=10000)
 })
 
 DATA_PROCESS = dict({
     'label_encoder': os.path.join(PROJECT_PATHS['artifacts'], 'label_encoder.pkl'),
+    'data_prep': os.path.join(PROJECT_PATHS['data_folder'], 'data_prep/'),
     'vocab': os.path.join(PROJECT_PATHS['artifacts'], 'vocab.pkl')
 })
 

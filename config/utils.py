@@ -1,3 +1,4 @@
+from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import LabelEncoder
 from nltk.stem import WordNetLemmatizer
 from nltk.tokenize import word_tokenize
@@ -38,6 +39,8 @@ PUNCTUATIONS = set(string.punctuation)
 
 VOCAB = joblib.load(os.path.join(PROJECT_PATHS['artifacts'], 'vocab.pkl'))
 
+MAX_LEN = 32
+
 class EmptyDataframe(Exception):
     pass
 
@@ -73,7 +76,7 @@ def tokenizer(text: str, stopwords: set = STOPWORDS, punctuations: set = PUNCTUA
     else:
         return tokens, refined_text
 
-def get_ids(text: str, max_length: int, vocab: dict[str, int] = VOCAB) -> np.ndarray[int]:
+def get_ids(text: str, max_length: int = MAX_LEN, vocab: dict[str, int] = VOCAB) -> np.ndarray[int]:
     text = str.lower(text)
     vector = [vocab[word] if word in vocab.keys() else vocab['UNK'] for word in text.split()]
     vector = vector[:max_length] + [vocab['PAD']] * (max_length - len(vector))
