@@ -6,7 +6,8 @@ DATA_INPUTS = dict({
 })
 
 DATA_PROCESS = dict({
-  'label_encoder': os.path.join(PROJECT_PATHS['artifacts'], 'label_encoder.pkl')
+    'label_encoder': os.path.join(PROJECT_PATHS['artifacts'], 'label_encoder.pkl'),
+    'vocab': os.path.join(PROJECT_PATHS['artifacts'], 'vocab.pkl')
 })
 
 DATA_OUTPUTS = dict({

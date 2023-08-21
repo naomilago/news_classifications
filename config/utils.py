@@ -36,6 +36,8 @@ nltk.data.path.append(NLTK_DATA)
 STOPWORDS = set(stopwords.words('english'))
 PUNCTUATIONS = set(string.punctuation)
 
+VOCAB = joblib.load(os.path.join(PROJECT_PATHS['artifacts'], 'vocab.pkl'))
+
 class EmptyDataframe(Exception):
     pass
 
@@ -70,3 +72,23 @@ def tokenizer(text: str, stopwords: set = STOPWORDS, punctuations: set = PUNCTUA
         return ['NULL'], 'NULL'
     else:
         return tokens, refined_text
+
+def get_ids(text: str, max_length: int, vocab: dict[str, int] = VOCAB) -> np.ndarray[int]:
+    text = str.lower(text)
+    vector = [vocab[word] if word in vocab.keys() else vocab['UNK'] for word in text.split()]
+    vector = vector[:max_length] + [vocab['PAD']] * (max_length - len(vector))
+    return np.array(vector)
+
+
+def get_attention_mask(ids: np.ndarray[int]) -> np.ndarray[int]:
+    return np.array([1 if id > 0 else 0 for id in ids])
+
+
+def ids_decoder(ids: np.ndarray[int], vocab: dict[str, int] = VOCAB) -> str:
+    reconstruction = list(vocab.keys())[list(vocab.values()).index(ids[0])]
+    for i in ids[1:]:
+        word = list(vocab.keys())[list(vocab.values()).index(i)]
+        word = ' ' + word if word != 'PAD' else ''
+        reconstruction += word
+
+    return reconstruction

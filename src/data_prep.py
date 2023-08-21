@@ -12,10 +12,17 @@ data = pd.concat(data_chunks, ignore_index=True)
 def data_prep(df: pd.DataFrame, text: str = 'headline', target: str = 'category', infer: bool = True, verbose: bool = True):
     if verbose:
         if not infer:
-            logger.info('This code is still in development...')
+            logger.info('Preparing data for inference...')
+            logger.info('Label encoding the targets...')
+
             le = joblib.load(DATA_PROCESS['label_encoder'])
             df[str.join('', 'le_' + target)] = le.transform(df[target].tolist())
-            print(df.head())
+
+            logger.info('Tokenizing the texts...')
+            df['tokens'], df['refined_text'] = df[text].apply(lambda x: tokenizer(x)[0]), df[text].apply(lambda y: tokenizer(y)[-1])
+
+            print(get_ids('hi catapimbas', max_length=5))
+
         else:
             pass
     else:
@@ -23,4 +30,4 @@ def data_prep(df: pd.DataFrame, text: str = 'headline', target: str = 'category'
 
 
 if __name__ == '__main__':
-    data_prep(df=data, infer=False, verbose=True)
+    data_prep(df=data.sample(10, random_state=20), infer=False, verbose=True)
