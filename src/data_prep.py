@@ -7,7 +7,10 @@ data_chunks = list([])
 for chunk in data_generator:
     data_chunks.append(chunk)
 
-data = pd.concat(data_chunks, ignore_index=True)
+if data_chunks:
+  data = pd.concat(data_chunks, ignore_index=True)
+else:
+  logger.error('The data is empty')
 
 def data_prep(df: pd.DataFrame, text: str = 'headline', target: str = 'category', infer: bool = True, verbose: bool = True):
     if verbose:
@@ -23,6 +26,9 @@ def data_prep(df: pd.DataFrame, text: str = 'headline', target: str = 'category'
 
             logger.info('Getting the text vectors...')
             df['vector'] = df['refined_text'].apply(lambda z: get_ids(z))
+
+            logger.info('Scaling the vectors from 0 to 1...')
+            df['scaled_vector'] = df.vector.apply(lambda x: vector_scaler(x))
 
             logger.info('Splitting into train/test...')
             train, test = train_test_split(df, test_size=.2, random_state=20)
@@ -44,6 +50,9 @@ def data_prep(df: pd.DataFrame, text: str = 'headline', target: str = 'category'
             logger.info('Getting the text vectors...')
             df['vector'] = df['refined_text'].apply(lambda z: get_ids(z))
 
+            logger.info('Scaling the vectors from 0 to 1...')
+            df['scaled_vector'] = df.vector.apply(lambda x: vector_scaler(x))
+
             logger.success('Data prepared successfully for inference 🎉')
             df.to_pickle(os.path.join(DATA_PROCESS['data_prep'], 'infer.pkl'))
 
@@ -56,6 +65,8 @@ def data_prep(df: pd.DataFrame, text: str = 'headline', target: str = 'category'
             df['tokens'], df['refined_text'] = df[text].apply(lambda x: tokenizer(x)[0]), df[text].apply(lambda y: tokenizer(y)[-1])
 
             df['vector'] = df['refined_text'].apply(lambda z: get_ids(z))
+
+            df['scaled_vector'] = df.vector.apply(lambda x: vector_scaler(x))
 
             train, test = train_test_split(df, test_size=.2, random_state=20)
 
@@ -71,6 +82,8 @@ def data_prep(df: pd.DataFrame, text: str = 'headline', target: str = 'category'
                 lambda y: tokenizer(y)[-1])
 
             df['vector'] = df['refined_text'].apply(lambda z: get_ids(z))
+
+            df['scaled_vector'] = df.vector.apply(lambda x: vector_scaler(x))
 
             df.to_pickle(os.path.join(DATA_PROCESS['data_prep'], 'infer.pkl'))
 

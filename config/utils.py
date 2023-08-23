@@ -1,7 +1,13 @@
 from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import MinMaxScaler
 from sklearn.preprocessing import LabelEncoder
+from sklearn.naive_bayes import ComplementNB
+from sklearn.metrics import precision_score
+from sklearn.metrics import accuracy_score
+from sklearn.metrics import recall_score
 from nltk.stem import WordNetLemmatizer
 from nltk.tokenize import word_tokenize
+from sklearn.metrics import f1_score
 from nltk.corpus import stopwords
 from collections import Counter
 import matplotlib.pyplot as plt
@@ -11,6 +17,7 @@ from config.config import *
 from loguru import logger
 import pandas as pd
 import numpy as np
+import sklearn
 import demoji
 import joblib
 import string
@@ -40,6 +47,8 @@ PUNCTUATIONS = set(string.punctuation)
 VOCAB = joblib.load(os.path.join(PROJECT_PATHS['artifacts'], 'vocab.pkl'))
 
 MAX_LEN = 32
+
+SCALER = joblib.load(os.path.join(PROJECT_PATHS['artifacts'], 'scaler.pkl'))
 
 class EmptyDataframe(Exception):
     pass
@@ -95,3 +104,6 @@ def ids_decoder(ids: np.ndarray[int], vocab: dict[str, int] = VOCAB) -> str:
         reconstruction += word
 
     return reconstruction
+
+def vector_scaler(vector: np.ndarray[int], scaler: sklearn.preprocessing._data.MinMaxScaler = SCALER) -> np.ndarray[float]:
+    return np.array([scaler.transform([[x]]) for x in vector]).squeeze()

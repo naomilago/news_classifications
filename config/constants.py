@@ -8,7 +8,8 @@ DATA_INPUTS = dict({
 DATA_PROCESS = dict({
     'label_encoder': os.path.join(PROJECT_PATHS['artifacts'], 'label_encoder.pkl'),
     'data_prep': os.path.join(PROJECT_PATHS['data_folder'], 'data_prep/'),
-    'vocab': os.path.join(PROJECT_PATHS['artifacts'], 'vocab.pkl')
+    'vocab': os.path.join(PROJECT_PATHS['artifacts'], 'vocab.pkl'),
+    'scaler': os.path.join(PROJECT_PATHS['artifacts'], 'scaler.pkl'),
 })
 
 DATA_OUTPUTS = dict({
